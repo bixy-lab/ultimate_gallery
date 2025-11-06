@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Frasi Segrete - Cifra/Decifra</title>
+<style>
+  body { font-family: Arial, sans-serif; max-width: 600px; margin: 2rem auto; }
+  textarea { width: 100%; height: 80px; margin-bottom: 10px; }
+  button { margin-right: 10px; padding: 10px 20px; }
+  #secret-list { margin-top: 20px; }
+  .secret-item { background: #f0f0f0; padding: 10px; margin-bottom: 10px; border-radius: 5px; }
+  .label { font-weight: bold; }
+</style>
+</head>
+<body>
+
+<h1>Frasi Segrete - Cifra e Decifra</h1>
+
+<label for="input-text" class="label">Inserisci frase</label>
+<textarea id="input-text" placeholder="Scrivi qui la frase..."></textarea>
+
+<button onclick="cifra()">Cifra</button>
+<button onclick="decifra()">Decifra</button>
+<button onclick="creaNuovaFrase()">Salva Frase</button>
+
+<h2>Frasi salvate</h2>
+<div id="secret-list"></div>
+
+<script>
+  // Funzione per codificare in Base64
+  function cifra() {
+    const input = document.getElementById('input-text').value;
+    if (!input) {
+      alert('Inserisci una frase da cifrare');
+      return;
+    }
+    const encoded = btoa(input);
+    document.getElementById('input-text').value = encoded;
+  }
+
+  // Funzione per decodificare da Base64
+  function decifra() {
+    const input = document.getElementById('input-text').value;
+    if (!input) {
+      alert('Inserisci una frase cifrata da decifrare');
+      return;
+    }
+    try {
+      const decoded = atob(input);
+      document.getElementById('input-text').value = decoded;
+    } catch (e) {
+      alert('Frase non valida per decifrare');
+    }
+  }
+
+  // Funzione per salvare la frase corrente nel localStorage
+  function creaNuovaFrase() {
+    const frase = document.getElementById('input-text').value;
+    if (!frase) {
+      alert('Inserisci una frase da salvare');
+      return;
+    }
+    let frasi = JSON.parse(localStorage.getItem('frasiSegrete') || '[]');
+    frasi.push(frase);
+    localStorage.setItem('frasiSegrete', JSON.stringify(frasi));
+    aggiornaLista();
+    document.getElementById('input-text').value = '';
+  }
+
+  // Funzione per mostrare le frasi salvate nella pagina
+  function aggiornaLista() {
+    const frasi = JSON.parse(localStorage.getItem('frasiSegrete') || '[]');
+    const container = document.getElementById('secret-list');
+    container.innerHTML = '';
+    frasi.forEach((f, index) => {
+      const div = document.createElement('div');
+      div.className = 'secret-item';
+      div.innerHTML = `<div><span class="label">#${index + 1}:</span> ${f}</div>
+                       <button onclick="usaFrase(${index})">Usa frase</button>
+                       <button onclick="eliminaFrase(${index})">Elimina</button>`;
+      container.appendChild(div);
+    });
+  }
+
+  // Usa una frase salvata per modificar il textarea
+  function usaFrase(index) {
+    const frasi = JSON.parse(localStorage.getItem('frasiSegrete') || '[]');
+    if (frasi[index]) {
+      document.getElementById('input-text').value = frasi[index];
+    }
+  }
+
+  // Elimina una frase salvata
+  function eliminaFrase(index) {
+    let frasi = JSON.parse(localStorage.getItem('frasiSegrete') || '[]');
+    if (frasi[index]) {
+      frasi.splice(index, 1);
+      localStorage.setItem('frasiSegrete', JSON.stringify(frasi));
+      aggiornaLista();
+    }
+  }
+
+  // Alla prima apertura aggiorna la lista
+  aggiornaLista();
+</script>
+
+</body>
+</html>
