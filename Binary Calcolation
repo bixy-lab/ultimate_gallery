@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Binary Calcolation</title>
+    <style>
+        :root {
+            /* Colore del vetro: bianco molto trasparente */
+            --glass: rgba(255, 255, 255, 0.12);
+            /* Bordo sottile e luminoso per l'effetto spessore */
+            --border: rgba(255, 255, 255, 0.3);
+            --text: #ffffff;
+            --accent: #00f2ff;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            
+            /* --- CONFIGURAZIONE IMMAGINE DI SFONDO --- */
+            /* Inserisci l'URL della tua immagine tra le virgolette qui sotto */
+            background-image: url('https://plus.nasa.gov/wp-content/uploads/2023/12/14926036_web1_L-Earthrise-EDH-181225.jpg'); 
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-color: #000; /* Colore di backup */
+        }
+
+        /* Overlay scuro per far risaltare il vetro se l'immagine è troppo chiara */
+        body::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.2);
+            z-index: 0;
+        }
+
+        .glass-card {
+            position: relative;
+            z-index: 1;
+            width: 90%;
+            max-width: 450px;
+            padding: 60px;
+            border-radius: 100px;
+            
+            /* EFFETTO LIQUID GLASS CORE */
+            background: var(--glass);
+            backdrop-filter: blur(25px) saturate(160%) contrast(100%);
+            -webkit-backdrop-filter: blur(25px) saturate(160%);
+            
+            border: 1px solid var(--border);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+            text-align: center;
+            color: var(--text);
+        }
+
+        h1 { font-weight: 600; font-size: 2rem; margin-bottom: 25px; }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            color: white;
+            font-size: 1.1rem;
+            text-align: center;
+            outline: none;
+        }
+
+        input:focus { border-color: var(--accent); }
+
+        select {
+            background: rgba(0, 0, 0, 0.3);
+            color: white;
+            border: 1px solid var(--border);
+            padding: 8px;
+            border-radius: 8px;
+            width: 100%;
+            margin: 10px 0;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 12px;
+            border: none;
+            background: #fff;
+            color: #000;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover { transform: scale(1.02); background: var(--accent); }
+
+        #result {
+            margin-top: 25px;
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--accent);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="glass-card">
+        <h1>Binary Glass</h1>
+        
+        <input type="text" id="bin1" placeholder="Binario 1" oninput="this.value = this.value.replace(/[^01]/g, '')">
+        
+        <select id="operator">
+            <option value="add">ADDIZIONE (+)</option>
+            <option value="sub">SOTTRAZIONE (-)</option>
+            <option value="mul">MOLTIPLICAZIONE (×)</option>
+            <option value="div">DIVISIONE (÷)</option>
+        </select>
+
+        <input type="text" id="bin2" placeholder="Binario 2" oninput="this.value = this.value.replace(/[^01]/g, '')">
+        
+        <button onclick="calculate()">CALCOLA</button>
+
+        <div id="result">---</div>
+    </div>
+
+    <script>
+        function calculate() {
+            const b1 = document.getElementById('bin1').value;
+            const b2 = document.getElementById('bin2').value;
+            const op = document.getElementById('operator').value;
+            const resDiv = document.getElementById('result');
+
+            if (!b1 || !b2) return;
+
+            const n1 = parseInt(b1, 2);
+            const n2 = parseInt(b2, 2);
+            let res;
+
+            switch(op) {
+                case 'add': res = n1 + n2; break;
+                case 'sub': res = n1 - n2; break;
+                case 'mul': res = n1 * n2; break;
+                case 'div': res = n2 !== 0 ? Math.floor(n1 / n2) : 'ERR'; break;
+            }
+
+            resDiv.innerText = (res === 'ERR') ? 'DIV BY 0' : res.toString(2);
+        }
+    </script>
+</body>
+</html>
